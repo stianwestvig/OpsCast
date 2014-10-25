@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.6/css/foundation.css">
+</head>
+<body>
+	<div class="row">
+		<div class="small-12 medium-6 columns">
+			<h1>113 App</h1>
+			<form  action="javaScript:setUser();">
+				<input type="text" class="name" id="input">
+
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="small-12 medium-6 columns">
+			<textarea name="debug" id="debug" cols="30" rows="10"></textarea>
+		</div>
+	</div>
+
+	<script>
+		window.datahubSocket = new WebSocket("ws://nanopils.servebeer.com:2233/ws", "protocolOne");
+		var user = null;
+
+		function sendLocation(position) {
+			if (user != null) {
+				var loc = {
+					latitude: position.coords.latitude,
+					longitude: position.coords.longitude,
+					accuracy: position.coords.accuracy,
+					user: user
+				};
+				document.getElementById('debug').innerHTML += '\nlatitude = ' + position.coords.latitude + '; longitude = ' + position.coords.longitude;
+				datahubSocket.send(JSON.stringify(loc));
+			}
+		}
+
+		function errorHandler(err) {
+			if(err.code == 1) {
+				console.log("Error: Access is denied!");
+			}else if( err.code == 2) {
+				console.log("Error: Position is unavailable!");
+			}
+		}
+		
+		function getLocationUpdate(){
+
+			if(navigator.geolocation){
+				// timeout at 60000 milliseconds (60 seconds)
+				var options = {timeout:10000};
+				geoLoc = navigator.geolocation;
+				watchID = geoLoc.watchPosition(sendLocation, 
+				errorHandler,
+				options);
+			}else{
+				console.log("Sorry, browser does not support geolocation!");
+			}
+		}
+
+		datahubSocket.onopen = function (event) {
+			datahubSocket.send("113 connected");
+			getLocationUpdate();
+		};
+
+		datahubSocket.onmessage = function (event) {
+			console.log(event);
+		}
+
+		function setUser() {
+			user = document.getElementById("input").value || null;
+			if (user != null) {
+				datahubSocket.send('{"user": "' + user + '"}');
+			}
+		}
+
+
+	</script>
+
+</body>
+</html>
