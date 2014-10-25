@@ -16,7 +16,7 @@ limitations under the License.
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hello World</title>
+<title>OpsCast</title>
 <style type="text/css">
 html, body, #wrapper {
    height:100%;
@@ -32,7 +32,7 @@ html, body, #wrapper {
 input {
   font-family: "Arial", Arial, sans-serif;
   font-size: 40px;
-  font-weight: bold;	
+  font-weight: bold;  
 }
 .border {
     border: 2px solid #cccccc;
@@ -46,7 +46,9 @@ input {
 </style>
 <script type="text/javascript" src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
 <script type="text/javascript">
-var applicationID = '794B7BBF';
+var applicationID = '47C31C10';
+
+//var applicationID = 'F28F88E3';
 var namespace = 'urn:x-cast:com.google.cast.sample.helloworld';
 var session = null;
 
@@ -178,7 +180,8 @@ function appendMessage(message) {
  * utility function to handle text typed in by user in the input field
  */
 function update() {
-  sendMessage(document.getElementById("input").value);
+  //var data = { type : "message", text : document.getElementById("input").value };
+  sendMessage(document.getElementById("input").value + " OpsCast");
 }
 
 /**
@@ -192,14 +195,14 @@ function transcribe(words) {
 </head>
 <body>
   <table id="wrapper">
-	<tr>
-		<td>
-			<form method="get" action="JavaScript:update();">
-				<input id="input" class="border" type="text" size="30" onwebkitspeechchange="transcribe(this.value)" x-webkit-speech/>
-			</form>
-		</td>
-	</tr>
-  </table>	
+  <tr>
+    <td>
+      <form method="get" action="JavaScript:update();">
+        <input id="input" class="border" type="text" size="30" onwebkitspeechchange="transcribe(this.value)" x-webkit-speech/>
+      </form>
+    </td>
+  </tr>
+  </table>  
 
   <!-- Debbugging output -->
   <div style="margin:10px; visibility:hidden;">

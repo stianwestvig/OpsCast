@@ -1,0 +1,11 @@
+{
+  "name": "OpsCast",
+  "version": "0.0.1",
+  "description": "Operation Central for Chromecast",
+  "main": "server.js",
+  "author": "TeamOpsCast",
+  "dependencies": {
+    "express": "latest",
+    "body-parser": "~1.8.2"
+  }
+}
