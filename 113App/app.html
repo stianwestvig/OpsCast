@@ -9,8 +9,9 @@
 	<div class="row">
 		<div class="small-12 medium-6 columns">
 			<h1>113 App</h1>
-			<form  action="javaScript:setUser();">
+			<form  action="JavaScript:setUser();">
 				<input type="text" class="name" id="input">
+				<input type="text" class="ip" id="ip">
 
 			</form>
 		</div>
@@ -23,18 +24,22 @@
 
 	<script>
 		window.datahubSocket = new WebSocket("ws://nanopils.servebeer.com:2233/ws", "protocolOne");
-		var user = null;
+		var username = null;
 
 		function sendLocation(position) {
-			if (user != null) {
-				var loc = {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude,
-					accuracy: position.coords.accuracy,
-					user: user
+			if (username != null) {
+				var msg = {
+					topic: 'locationUpdate',
+					payload: {
+						location: {
+							latitude: position.coords.latitude,
+							longitude: position.coords.longitude,
+							accuracy: position.coords.accuracy
+						}
+					}
 				};
 				document.getElementById('debug').innerHTML += '\nlatitude = ' + position.coords.latitude + '; longitude = ' + position.coords.longitude;
-				datahubSocket.send(JSON.stringify(loc));
+				datahubSocket.send(JSON.stringify(msg));
 			}
 		}
 
@@ -61,8 +66,11 @@
 		}
 
 		datahubSocket.onopen = function (event) {
-			datahubSocket.send("113 connected");
-			getLocationUpdate();
+			var msg = {
+				topic: 'onConnect',
+				payload: {}
+			};
+			datahubSocket.send(JSON.stringify(msg));
 		};
 
 		datahubSocket.onmessage = function (event) {
@@ -70,9 +78,21 @@
 		}
 
 		function setUser() {
-			user = document.getElementById("input").value || null;
-			if (user != null) {
-				datahubSocket.send('{"user": "' + user + '"}');
+			username = document.getElementById("input").value || null;
+			ip = document.getElementById("ip").value || null;
+			if (username != null) {
+				var msg = {
+					topic: 'setUser',
+					payload: {
+						user: {
+							name: username,
+							ip: ip,
+							source: 'app'
+						}
+					}
+				};
+				datahubSocket.send(JSON.stringify(msg));
+				getLocationUpdate();
 			}
 		}
 
