@@ -84,6 +84,11 @@ limitations under the License.
      */
     function onInitSuccess() {
       appendMessage("onInitSuccess");
+      var msg = {
+        topic:"senderInit",
+        payload:{}
+      };
+      sendMessage(JSON.stringify(msg));
     }
 
     /**
@@ -199,7 +204,13 @@ limitations under the License.
      */
     function onDropdownChange() {
       //var data = { type : "message", text : document.getElementById("input").value };
-      sendMessage($('select').val());
+      var msg = {
+        topic:"tabChange",
+        payload:{
+          id: $('select').val()
+        }
+      };
+      sendMessage(JSON.stringify(msg));
     }
 
     function updateDropdown(users) {
