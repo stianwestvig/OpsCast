@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 
 
 
-app.use(express.static(__dirname + '/sender')); 		// set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/')); 		// set the static files location /public/img will be /img for users
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
