@@ -4,15 +4,21 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.6/css/foundation.css">
+	<style>
+		.hidden {
+			display: none;
+		}
+	</style>
 </head>
 <body>
 	<div class="row">
 		<div class="small-12 medium-6 columns">
 			<h1>113 App</h1>
-			<form  action="JavaScript:setUser();">
+			<form  action="#">
 				<input type="text" class="name" id="input">
 				<input type="text" class="ip" id="ip">
-
+				<a id="login" class="button">Login</a>
+				<a id="logout" class="button hidden">Logout</a>
 			</form>
 		</div>
 	</div>
@@ -25,6 +31,15 @@
 	<script>
 		window.datahubSocket = new WebSocket("ws://nanopils.servebeer.com:2233/ws", "protocolOne");
 		var username = null;
+		var inputField = document.getElementById("input");
+		var ipField = document.getElementById("ip");
+		var loginButton = document.getElementById('login');
+		var logoutButton = document.getElementById('logout');
+
+		function init() {
+			loginButton.onclick = onLogin;
+			logoutButton.onclick = onLogout;
+		}
 
 		function sendLocation(position) {
 			if (username != null) {
@@ -77,9 +92,30 @@
 			console.log(event);
 		}
 
-		function setUser() {
-			username = document.getElementById("input").value || null;
-			ip = document.getElementById("ip").value || null;
+		function onLogin(event) {
+			event.preventDefault();
+			if (window.datahubSocket == null) {
+				window.datahubSocket = new WebSocket("ws://nanopils.servebeer.com:2233/ws", "protocolOne");
+			}
+			if (onUser()) {
+				inputField.disabled = true;
+				logoutButton.className = logoutButton.className.replace(/hidden/g, '');
+				loginButton.className += ' hidden';
+			}
+		}
+
+		function onLogout(event) {
+			event.preventDefault();
+			window.datahubSocket.close();
+			window.datahubSocket = null;
+			inputField.disabled = false;
+			loginButton.className = loginButton.className.replace(/hidden/g, '');
+			logoutButton.className += ' hidden';
+		}
+
+		function onUser() {
+			username = inputField.value || null;
+			ip = ipField.value || null;
 			if (username != null) {
 				var msg = {
 					topic: 'setUser',
@@ -93,8 +129,18 @@
 				};
 				datahubSocket.send(JSON.stringify(msg));
 				getLocationUpdate();
+				return true;
+			}
+			else {
+				return false;
 			}
 		}
+
+		function onLogout() {
+
+		}
+
+		init();
 
 
 	</script>
